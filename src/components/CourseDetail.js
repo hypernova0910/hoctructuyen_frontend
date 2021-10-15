@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     BrowserRouter as Router,
     Switch,
@@ -16,10 +16,17 @@ function CourseDetail() {
     }catch(e){
         console.error(e)
     }
-    const course = CourseService.getOneById(id)
+    const [course, setCourse] = useState({});
+    CourseService.getOneById(id).then((res) => {
+        setCourse(res.data)
+    })
     if(course){
         return (
-            <div>{course.title}</div>
+            <div>
+                <div>{course.title}</div>
+                <div>{course.teacher.name}</div>
+            </div>
+            
         )
     }
     else{

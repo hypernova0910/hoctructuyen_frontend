@@ -9,7 +9,9 @@ class CourseList extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({courses: CourseService.getAll()})
+        CourseService.getAll().then((res) => {
+            this.setState({courses: res.data})
+        })
     }
 
     render() {
