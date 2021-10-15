@@ -15,6 +15,7 @@ class CourseList extends React.Component {
     }
 
     render() {
+        //console.log(this.state.courses)
         return (
             <div className="row" id="courses">
                  {this.state.courses.map((course, index) => <CourseCard key={index} course={course} />)}       
