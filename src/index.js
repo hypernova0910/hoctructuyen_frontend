@@ -1,11 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'bootstrap-css-only/css/bootstrap.min.css';
+import'mdbreact/dist/css/mdb.css';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import App from './components/App';
+import StoreProvider from './utils/store'
+import AuthProvider from './utils/AuthProvider'
+import SnackbarProvider from './context/SnackbarProvider'
+import DialogProvider from './context/DialogProvider'
 
 ReactDOM.render(
-  <App/>,
+  <AuthProvider>
+    <StoreProvider>
+      <SnackbarProvider>
+        <DialogProvider>
+          <App/>
+        </DialogProvider>
+      </SnackbarProvider>
+    </StoreProvider>
+  </AuthProvider>
+  ,
   document.getElementById('root')
 )
 

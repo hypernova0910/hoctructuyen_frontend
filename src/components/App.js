@@ -1,38 +1,51 @@
-import React, { Suspense, lazy } from 'react';
+import React, { useContext } from 'react';
 import ErrorBoundary from './ErrorBoundary';
 import Header from './Header';
 import Footer from './Footer';
 import Home from './Home';
-import FormSignIn from './FormSignIn';
+import LoginContainer from './LoginContainer';
+import Background from './Background';
 import CourseDetail from './CourseDetail';
 import NotFound404 from './NotFound404';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { StoreContext } from "../utils/store";
+import useAuth from '../hooks/useAuth';
+import ReactLoading from 'react-loading';
+import ProcessForm from './ProcessForm';
 
-class App extends React.Component {
-    render() {
+function App(){
+    const { loadingContext } = useContext(StoreContext);
+    const [loading, setLoading] = loadingContext
+    const {user} = useAuth()
+    if(!user){
+        return(
+            <Background img="Picture1.jpg">
+                <ReactLoading type='spin' color='#aaa' className={'center-screen top-component ' + (loading ? '' : 'hidden')} />
+                <LoginContainer/>
+            </Background>
+        )
+    }
+    else{
         return(
             <div className="app">
+                <ReactLoading type='spin' color='#aaa' className={'center-screen top-component ' + (loading ? '' : 'hidden') }/>
                 <Router>
-                    <Switch>
-                        <Route path='/sign-in' component={FormSignIn}></Route>
-                        <Route path='/'>
-                            <Header/>
-                            <div className="container" id="main">
-                                <ErrorBoundary>
-                                    <Switch>
-                                        <Route path='/course/:id'>
-                                            <CourseDetail/>
-                                        </Route>
-                                        <Route exact path='/'>
-                                            <Home />
-                                        </Route>
-                                        <Route path="*" component={NotFound404} />
-                                    </Switch>
-                                </ErrorBoundary>
-                            </div>
-                            <Footer/>
-                        </Route>
-                    </Switch>
+                    <Header/>
+                    <div className="container" id="main">
+                        <ErrorBoundary>
+                            <Switch>
+                                <Route path='/course/:id' component={CourseDetail}/>
+                                    {/* <Switch>
+                                        <Route path='/' component={CourseDetail}/>
+                                    </Switch> */}
+                                <Route exact path='/'>
+                                    <Home />
+                                </Route>
+                                <Route path="*" component={NotFound404} />
+                            </Switch>
+                        </ErrorBoundary>
+                    </div>
+                    <Footer/>
                 </Router>
             </div>
         )

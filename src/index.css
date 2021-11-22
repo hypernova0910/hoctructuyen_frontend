@@ -16,3 +16,41 @@ code {
   padding-top: 58px!important;
   min-height: 100vh;
 }
+
+*, *:before, *:after, ul, li, a, button, input, h1, h2, h3, h4, h5, h6, p, img, image, svg, path, g, canvas {
+  /* margin: 0;
+  padding: 0; */
+  box-sizing: border-box;
+  background-color: transparent;
+  border: none;
+  text-decoration: none;
+  font-family: 'Roboto';
+  user-select: none;
+  list-style: none;
+  position: relative;
+}
+.html, body {
+  background-color: #fafafa;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  height: 100%;
+}
+
+.center-screen {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+}
+
+.hidden{
+  display: none;
+}
+
+.top-component{
+  z-index: 1000;
+}
