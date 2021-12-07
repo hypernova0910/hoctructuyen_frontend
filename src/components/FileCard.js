@@ -11,10 +11,12 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import word from '../img/word-icon.png'
+import fileIcon from '../img/file-icon.png'
 import fileDownload from 'js-file-download'
 import useAuth from '../hooks/useAuth';
 import { Roles, FileType } from '../common/constants';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 import TeacherFileService from '../services/TeacherFileService';
 import StudentFileService from '../services/StudentFileService';
@@ -109,7 +111,7 @@ export default function FileCard(props) {
       <CardMedia
         component="img"
         // height="194"
-        image={word}
+        image={fileIcon}
         alt="Paella dish"
       />
       
@@ -128,10 +130,10 @@ export default function FileCard(props) {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleDownload}>Tải xuống</MenuItem>
+        <MenuItem onClick={handleDownload}><FileDownloadOutlinedIcon/>Tải xuống</MenuItem>
         <MenuItem 
         sx={((role === Roles.TEACHER && props.type == FileType.TEACHER) || (role === Roles.STUDENT && props.type == FileType.STUDENT)) ? {} : {display: 'none'}} 
-        onClick={handleDelete}>Xóa</MenuItem>
+        onClick={handleDelete}><DeleteOutlinedIcon/>Xóa</MenuItem>
       </Menu>
     </div>
   );

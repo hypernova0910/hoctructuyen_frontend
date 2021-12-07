@@ -7,10 +7,20 @@ class CourseService{
     getAll(search, role){
         //console.log(search)
         if(role == Roles.STUDENT){
-            return axios.post(CLASS_INFO_REST_API_URL + 'sinhvien/getAll/0/10', search)
+            return axios.post(CLASS_INFO_REST_API_URL + 'sinhvien/getAll/0/100', search)
         }
         else if(role == Roles.TEACHER){
-            return axios.post(CLASS_INFO_REST_API_URL + 'giaovien/getAll/0/10', search)
+            return axios.post(CLASS_INFO_REST_API_URL + 'giaovien/getAll/0/100', search)
+        }
+    }
+
+    getAllInSemester(search, role, year, semester){
+        if(role == Roles.STUDENT){
+            return axios.post(CLASS_INFO_REST_API_URL + 'sinhvien/' + year + '/' + semester, search)
+        }
+        else if(role == Roles.TEACHER){
+            console.log('teacher')
+            return axios.post(CLASS_INFO_REST_API_URL + 'giaovien/' + year + '/' + semester, search)
         }
     }
 

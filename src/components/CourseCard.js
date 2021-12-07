@@ -23,7 +23,7 @@ function CourseCard(props) {
           <div className="card-body">
             <h5 className="card-title">{props.course.tenLopHoc}</h5>
             <p className="card-text">{`Thời gian: T${props.course.ngayHoc}(${props.course.thoiGianBatDau} - ${props.course.thoiGianKetThuc})`}</p>
-            <a target="_tab" href={props.course.link} className="btn btn-primary">{formatLinkButton()}</a>
+            <a target="_tab" href='https://us04web.zoom.us/j/8605633285?pwd=bkhtRlNxL3E3SnZCTU1oSFNHcHJNQT09' className="btn btn-primary">{formatLinkButton()}</a>
             <Link to={'course/' + props.course.malophoc} className="btn .btn-secondary">Chi tiết</Link>
           </div>
         </div>

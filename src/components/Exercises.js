@@ -11,6 +11,7 @@ import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import {formatDistance, formatDistanceStrict} from 'date-fns'
 import vi from 'date-fns/locale/vi'
+import ExerciseCard from './ExerciseCard'
 
 export default function Exercises(props){
     const [open, setOpen] = React.useState(false);
@@ -31,41 +32,6 @@ export default function Exercises(props){
     //       formatDistance,
     //   },
     // })
-      
-    const formatDistanceLocale = {
-    //   lessThanXSeconds: '{{count}}s',
-    //   xSeconds: '{{count}}s',
-    //   halfAMinute: '30s',
-      lessThanXMinutes: '{{count}} phút',
-      xMinutes: '{{count}} phút',
-      aboutXHours: '{{count}} giờ',
-      xHours: '{{count}} giờ',
-      xDays: '{{count}} ngày',
-      aboutXWeeks: '{{count}} tuần',
-      xWeeks: '{{count}} tuần',
-      aboutXMonths: '{{count}} tháng',
-      xMonths: '{{count}} tháng',
-      aboutXYears: '{{count}} năm',
-      xYears: '{{count}} năm',
-      overXYears: '{{count}} năm',
-      almostXYears: '{{count}} năm',
-    }
-    
-    function formatDistance(token, count, options) {
-      options = options || {}
-    
-      const result = formatDistanceLocale[token].replace('{{count}}', count)
-    
-      if (options.addSuffix) {
-        if (options.comparison < 0) {
-          return 'sớm ' + result
-        } else {
-          return 'muộn ' + result
-        }
-      }
-    
-      return result
-    }
 
     return (
         <>
@@ -82,50 +48,14 @@ export default function Exercises(props){
                 </TableHead>
                 <TableBody>
                 {props.exercises.map((exercise, index) => (
-                    <TableRow
-                    key={exercise.masinhvien}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    >
-                    <TableCell>
-                        {exercise.tenSinhVien}
-                    </TableCell>
-                    <TableCell>
-                        <Checkbox checked={exercise.idnhomfile != null}/>
-                    </TableCell>
-                    <TableCell>
-                        {exercise.lansuacuoi ? (new Date(exercise.lansuacuoi).toLocaleString()) : ''}
-                        <br/>
-                        {exercise.lansuacuoi ? 
-                        formatDistanceStrict(new Date(exercise.lansuacuoi), new Date(props.process.thoiGianNop), {
-                            addSuffix: true,
-                            locale: {
-                            // ...vi,
-                            formatDistance,
-                        },
-                        })
-                        : ''}
-                    </TableCell>
-                    <TableCell>
-                        <Checkbox checked={exercise.diem != null}/>
-                    </TableCell>
-                    <TableCell>
-                        <Button
-                        variant="contained"
-                        component="label"
-                        // sx={{margin: "8px 8px 8px 0"}}
-                        onClick={() => {
-                            setOpen(true)
-                            setExercise(exercise)
-                        }}
-                        sx={exercise.idnhomfile != null ? {} : {display: 'none'}}
-                        >
-                        Chấm bài
-                        
-                        </Button>
-                    </TableCell>
-                    {/* <TableCell align="right">{row.carbs}</TableCell>
-                    <TableCell align="right">{row.protein}</TableCell> */}
-                    </TableRow>
+                    <ExerciseCard 
+                    key={exercise.masinhvien} 
+                    exercise={exercise} 
+                    process={props.process}
+                    handleClickMark={() => {
+                        setOpen(true);
+                        setExercise(exercise);
+                    }}/>
                 ))}
                 </TableBody>
             </Table>

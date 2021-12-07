@@ -241,7 +241,7 @@ export default function SubmitExercise(props) {
         <div>
             <h1>{process.tenQuaTrinh}</h1>
             <p>{process.moTa}</p>
-            <p>{'Hạn nộp: ' + process.thoiGianNop}</p>
+            <p>{'Hạn nộp: ' + (new Date(process.thoiGianNop).toLocaleString())}</p>
             <div className="d-flex">
                 <Button
                 variant="contained"

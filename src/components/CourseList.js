@@ -18,7 +18,7 @@ function CourseList(props) {
         //console.log(this.state.courses)
         return (
             <div className="row" id="courses">
-                 {props.courses.map((course, index) => <CourseCard key={index} course={course} />)}       
+                 {props.courses.map((course, index) => <CourseCard key={course.malophoc} course={course} />)}       
             </div>
         )
     // }

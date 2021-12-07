@@ -50,8 +50,8 @@ function Header(props) {
                     <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" className="rounded-circle"/>
                 </a>
                 <ul className="dropdown-menu text-small" aria-labelledby="dropdownUser1">
-                    <li><a className="dropdown-item" href="#">Thông tin cá nhân</a></li>
-                    <li><a className="dropdown-item" href="#">Đổi mật khẩu</a></li>
+                    {/* <li><a className="dropdown-item" href="#">Thông tin cá nhân</a></li> */}
+                    <li><a className="dropdown-item" onClick={props.changePassword}>Đổi mật khẩu</a></li>
                     {/* <!-- <li><hr className="dropdown-divider"></li> --> */}
                     <li><Link className="dropdown-item" onClick={onClickBtnLogout} to="/">Đăng xuất</Link></li>
                 </ul>
