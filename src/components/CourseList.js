@@ -10,33 +10,7 @@ function CourseList(props) {
     //     super(props)
     //     this.state = {courses: []}
     // }
-    const [courses, setCourses] = useState([])
-    const {user, role} = useAuth()
-    const { loadingContext } = useContext(StoreContext);
-    const [ loading, setLoading ] = loadingContext
-    let search = {
-        long1: 0
-    }
-    if(role == Roles.STUDENT){
-        search = {
-            long1: user.masinhvien
-        }
-    }
-    else if(role == Roles.TEACHER){
-        search = {
-            long1: user.magiaovien
-        }
-    }
-    // componentDidMount() {
-    useEffect(() => {
-        setLoading(true)
-        CourseService.getAll(search, role).then((res) => {
-            setLoading(false)
-            setCourses(res.data)
-        }).catch((err) => {
-            setLoading(false)
-        })
-    }, [])
+    
     
     // }
 
@@ -44,7 +18,7 @@ function CourseList(props) {
         //console.log(this.state.courses)
         return (
             <div className="row" id="courses">
-                 {courses.map((course, index) => <CourseCard key={index} course={course} />)}       
+                 {props.courses.map((course, index) => <CourseCard key={index} course={course} />)}       
             </div>
         )
     // }

@@ -1,5 +1,4 @@
 import React from 'react';
-import Timer from './Timer';
 import Dropdown from './Dropdown';
 
 class Filter extends React.Component {
@@ -9,18 +8,19 @@ class Filter extends React.Component {
 
         return(
             <div className="row">
-                <label className="col-lg-2" style={{textAlign: 'right'}}>Thời gian</label>
+                {/* <label className="col-lg-2" style={{textAlign: 'right'}}>Thời gian</label>
                 <div className="col-lg-2" id="timer">
                     <Timer/>
-                </div>
+                </div> */}
+                <label className="col-lg-8" style={{textAlign: 'right'}}></label>
                 <label className="col-lg-2" style={{textAlign: 'right'}}>Sắp xếp theo</label>
                 <div className="dropdown col-lg-2" id="sortBy">
                     <Dropdown items={sortBy}/>
                 </div>
-                <label className="col-lg-2" style={{textAlign: 'right'}}>Lọc các HP</label>
+                {/* <label className="col-lg-2" style={{textAlign: 'right'}}>Lọc các HP</label>
                 <div className="dropdown col-lg-2" id="filterBy">
                     <Dropdown items={filterBy}/>
-                </div>
+                </div> */}
             </div>
         )
     }

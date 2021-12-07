@@ -1,9 +1,11 @@
 import React from 'react';
+import {formatDistanceToNow} from 'date-fns'
+import vi from 'date-fns/locale/vi'
 
-class Timer extends React.Component {
+class CountDown extends React.Component {
     constructor(props) {
       super(props);
-      this.state = {date: new Date()};
+      this.state = {timeLeft: ""};
     }
   
     componentDidMount() {
@@ -18,16 +20,19 @@ class Timer extends React.Component {
     }
   
     tick() {
+      if(!this.props.date){
+        return
+      }
       this.setState({
-        date: new Date()
+        timeLeft: formatDistanceToNow(this.props.date, {addSuffix: true, locale: vi})
       });
     }
   
     render() {
       return (
-          <label>{this.state.date.toLocaleString()}</label>
+          <>{this.state.timeLeft}</>
       );
     }
 }
 
-export default Timer;
+export default CountDown;

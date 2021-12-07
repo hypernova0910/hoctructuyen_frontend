@@ -11,7 +11,10 @@ export default function FileList(props){
         else if(file.idfilegv){
             id = file.idfilegv
         }
-        return <FileCard key={id} file={file} fileMangager={props.fileMangager}/>
+        else if(file.idfilesv){
+            id = file.idfilesv
+        }
+        return <FileCard type={props.type} key={id} file={file} fileMangager={props.fileMangager}/>
     }
     
     return(

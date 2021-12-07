@@ -17,7 +17,10 @@ import FileList from './FileList';
 import ProcessService from '../services/ProcessService';
 import useAuth from '../hooks/useAuth';
 import useSnackbar from '../hooks/useSnackbar';
+import useDialog from '../hooks/useDialog';
 import TeacherFileService from '../services/TeacherFileService';
+import {Roles} from "../common/constants"
+import {Link, Redirect} from "react-router-dom"
 
 function reducer(state, action) {
     // if(action.type == 'assign'){
@@ -69,11 +72,12 @@ function reducer(state, action) {
 }
 
 export default function ProcessForm(props){
-    const {openContext, courseContext, firstOpenContext, reloadContext, processContext} = useContext(ProcessFormContext);
+    const {openContext, courseContext, firstOpenContext, reloadContext, processContext, exerciseContext} = useContext(ProcessFormContext);
     const [open, setOpen] = openContext
     const [course, setCourse] = courseContext
     const [reload, setReload] = reloadContext
     const [process, setProcess ] = processContext
+    const [exercise, setExercise] = exerciseContext
     //const [value, setValue] = useState(new Date());
     const [state, dispatch] = useReducer(reducer, {files: [], filesAdd: [], filesDelete: []})
     const fileCountRef = useRef(0)
@@ -85,8 +89,12 @@ export default function ProcessForm(props){
     const [yeuCauNopBai, setYeuCauNopBai] = useState(false)
     const [thoiGianNop, setThoiGianNop] = useState(new Date())
     const [moTa, setMoTa] = useState('')
-    const {user} = useAuth()
+
+    const [changed, setChanged] = useState(false)
+
+    const {user, role} = useAuth()
     const {toast} = useSnackbar()
+    const {showDialog} = useDialog()
 
     //const fileCardsRef = useRef([{}, {}])
     //console.log(fileCards)
@@ -94,6 +102,7 @@ export default function ProcessForm(props){
     useEffect(() => {
         //console.log(process)
         dispatch({type: 'clear'})
+        setChanged(false)
         if(process != null){
             //console.log('render')
             setTenQuaTrinh(process.tenQuaTrinh)
@@ -102,7 +111,7 @@ export default function ProcessForm(props){
             setMoTa(process.moTa)
             fileCountRef.current = 0
             const search = {
-                long1: user.magiaovien,
+                //long1: user.magiaovien,
                 long2: process.maquatrinh
             }
             TeacherFileService.getAllFiles(search).then((res) =>{
@@ -115,8 +124,22 @@ export default function ProcessForm(props){
     }, [process])
 
     const handleClose = () => {
-        setOpen(false);
+        if(changed){
+            showDialog('Cảnh báo', 'Các thay đổi sẽ không được lưu. Bạn có chắc muốn thoát', () => {
+                setOpen(false);
+            })
+        }
+        else{
+            setOpen(false);
+        }
+        
     };
+
+    // const handleExercise = () => {
+    //     if(role === Roles.STUDENT){
+
+    //     }
+    // }
 
     function handleSubmit() {
         if(tenQuaTrinh.trim() == ''){
@@ -241,10 +264,25 @@ export default function ProcessForm(props){
                     helperText={tenQuaTrinh.trim() == '' && !firstOpen ? "Chưa nhập tên quá trình" : ''}
                     value={tenQuaTrinh}
                     onChange={(e) => {setTenQuaTrinh(e.target.value)}}
+                    inputProps={role === Roles.TEACHER ? {} : {readOnly: true}}
                     />
                     </div>
                     <div className="col-lg-4">
-                        <FormControlLabel control={<Checkbox checked={yeuCauNopBai} id="yeuCauNopBai" onChange={(e) => {setYeuCauNopBai(e.target.checked)}} />} label="Yêu cầu nộp bài" />
+                        <FormControlLabel control={
+                        <Checkbox 
+                        // inputProps={role === Roles.TEACHER ? {} : {readOnly: true}} 
+                        checked={yeuCauNopBai} 
+                        id="yeuCauNopBai"
+                        onChange={(e) => {
+                            if(role === Roles.TEACHER){
+                                setChanged(true)
+                                setYeuCauNopBai(e.target.checked)
+                            }
+                            else{
+                                e.preventDefault()
+                            }
+                        }} />
+                        } label="Yêu cầu nộp bài" />
                     </div>
                     <div className="col-lg-4">
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -253,10 +291,12 @@ export default function ProcessForm(props){
                         label="Thời gian nộp"
                         value={thoiGianNop}
                         onChange={(newValue) => {
+                            setChanged(true)
                             setThoiGianNop(newValue);
                         }}
-                        disabled={!yeuCauNopBai}
+                        disabled={!yeuCauNopBai || role != Roles.TEACHER}
                         inputFormat="dd-MM-yyyy HH:mm"
+                        inputProps={role === Roles.TEACHER ? {} : {readOnly: true}}
                     />
                     </LocalizationProvider>
                     </div>
@@ -270,39 +310,77 @@ export default function ProcessForm(props){
                         multiline={true}
                         autoComplete="off"
                         value={moTa ? moTa : ''}
-                        onChange={(e) => {setMoTa(e.target.value)}}
+                        onChange={(e) => {
+                            setChanged(true)
+                            setMoTa(e.target.value)
+                        }}
+                        inputProps={role === Roles.TEACHER ? {} : {readOnly: true}}
                         />
                     </div>
                 </div>
-                <div className="row py-2">
-                    <div className="col-lg-4">
+                <div className="d-flex">
                     <Button
                     variant="contained"
                     component="label"
-                    // sx={{margin: "8px"}}
+                    // sx={{margin: "8px 8px 8px 0"}}
+                    sx={{
+                        margin: "8px 8px 8px 0",
+                        display: role === Roles.TEACHER ? '' : 'none'
+                    }}
                     >
                     Thêm file
                     <input
                         type="file"
-                        onChange={handleChooseFile}
+                        onChange={(e) => {
+                            handleChooseFile(e)
+                            setChanged(true)
+                        }}
                         ref={fileInput}
                         hidden
                         multiple
                     />
                     </Button>
-                    </div>
+                    <Link
+                     className={process ? (process.thoiGianNop ? '' : 'hidden') : "hidden"}
+                     to={role === Roles.TEACHER ? ('/cham-bai/' + (process ? process.maquatrinh : '')) : ('/nop-bai/' + (process ? process.maquatrinh : ''))}>
+                    <Button
+                    variant="contained"
+                    component="label"
+                    sx={{margin: "8px 8px 8px 0"}}
+                    // onClick={handleExercise}
+                    >
+                    {role === Roles.TEACHER ? 'Chấm bài' : 'Nộp bài'}
                     
+                    </Button>
+                    </Link>
                 </div>
+                <label>Tài liệu</label>
                 <div className="row py-2">
                     <div className="col-lg-12">
                         <FileList files={state.files} fileMangager={[state, dispatch]}/>
                     </div>
                 </div>
+                <DialogContentText>
+                    {
+                        !exercise ? '' :
+                        `Điểm: ${exercise.diem ? exercise.diem : 'Chưa chấm'}`
+                    }
+                    <br/>
+                    {
+                        !exercise ? '' :
+                        `Nhận xét:`
+                    }
+                    <br/>
+                    {
+                        !exercise ? '' :
+                        `${exercise.nhanXet ? exercise.nhanXet : ''}`
+                    }
+                </DialogContentText>
                 </Box>
             </DialogContent>
             <DialogActions>
-            <Button onClick={handleClose}>Hủy</Button>
-            <Button onClick={handleSubmit}>Lưu</Button>
+            <Button onClick={handleClose}>Đóng</Button>
+            <Button sx={role === Roles.TEACHER ? {} : {display: 'none'}} onClick={handleSubmit}>Lưu</Button>
             </DialogActions>
         </Dialog>
     )

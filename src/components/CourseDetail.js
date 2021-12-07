@@ -15,6 +15,7 @@ import ProcessList from './ProcessList'
 import Button from './Button'
 import ProcessForm from './ProcessForm'
 import ProcessService from '../services/ProcessService';
+import {Roles} from "../common/constants"
 // import {ProcessFormContext} from '../contexts/ProcessFormContext';
 
 export const ProcessFormContext = React.createContext(null);
@@ -23,12 +24,13 @@ function CourseDetail(props) {
     const params = useParams()
     //const [idLopHoc, setIdLopHoc] = useState(0)
     let id = 0
-    const [course, setCourse] = useState();
+    const [course, setCourse] = useState(null);
     const [processes, setProcesses ] = useState([])
     const [process, setProcess ] = useState(null)
     const [open, setOpen] = React.useState(false);
     const [firstOpen, setFirstOpen] = useState(false);
     const [reload, setReload] = useState(true)
+    const [exercise, setExercise] = useState()
     const { loadingContext } = useContext(StoreContext);
     const [ loading, setLoading ] = loadingContext
     const context = {
@@ -36,8 +38,11 @@ function CourseDetail(props) {
         courseContext: [course, setCourse],
         firstOpenContext: [firstOpen, setFirstOpen],
         reloadContext: [reload, setReload],
-        processContext: [process, setProcess]
+        processContext: [process, setProcess],
+        exerciseContext: [exercise, setExercise]
     }
+
+    const {role} = useAuth()
     //const {openContext} = useContext(ProcessFormContext);
     //const [open, setOpen] = openContext
     const location = useLocation()
@@ -84,7 +89,15 @@ function CourseDetail(props) {
         setProcess(null)
         setOpen(true);
         setFirstOpen(true);
+        setExercise(null)
     };
+
+    const style = {
+        float: 'right'
+    }
+    if(role !== Roles.TEACHER){
+        style.display = 'none'
+    }
     
     if(course){
         return (
@@ -95,7 +108,12 @@ function CourseDetail(props) {
                         <h3>{'Giáo viên: ' + course.giaoVien.tenGiaoVien}</h3>
                     </div>
                     <div className="col-lg-3">
-                        <button onClick={handleClickOpen} className="btn btn-primary" style={{'float': 'right'}}>Thêm quá trình</button>
+                        <button
+                        onClick={handleClickOpen} 
+                        className="btn btn-primary" 
+                        style={style}>
+                            Thêm quá trình
+                        </button>
                     </div>
                 </div>
                 <ProcessList processes={processes}/>

@@ -54,3 +54,7 @@ body, html {
 .top-component{
   z-index: 1000;
 }
+
+.d-flex{
+  display: flex;
+}

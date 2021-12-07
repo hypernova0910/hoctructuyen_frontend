@@ -7,6 +7,10 @@ class Dropdown extends React.Component {
         this.state = {selectedValue: props.items[0]}
     }
 
+    // handleClick(e, index) {
+        
+    // }
+
     render() {
         return(
             <>
@@ -15,7 +19,13 @@ class Dropdown extends React.Component {
                 </button>
                 <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     {this.props.items.map((item, index) =>{
-                        return <a key={index} className="dropdown-item course-order" onClick={(e) => {e.preventDefault(); this.setState({'selectedValue': item})}} href="#">{item}</a>
+                        return <a key={index} className="dropdown-item course-order" onClick={
+                            (e) => {
+                                e.preventDefault()
+                                this.setState({'selectedValue': item})
+                                this.props.onChangeValue(index)
+                            }
+                        } href="#">{item}</a>
                     })}
                 </div>
             </>

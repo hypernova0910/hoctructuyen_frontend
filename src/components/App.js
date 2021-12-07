@@ -7,6 +7,8 @@ import LoginContainer from './LoginContainer';
 import Background from './Background';
 import CourseDetail from './CourseDetail';
 import NotFound404 from './NotFound404';
+import SubmitExercise from './SubmitExercise';
+import MarkExercise from './MarkExercise'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { StoreContext } from "../utils/store";
 import useAuth from '../hooks/useAuth';
@@ -38,6 +40,8 @@ function App(){
                                     {/* <Switch>
                                         <Route path='/' component={CourseDetail}/>
                                     </Switch> */}
+                                <Route path='/nop-bai/:qtid' component={SubmitExercise}/>
+                                <Route path='/cham-bai/:qtid' component={MarkExercise}/>
                                 <Route exact path='/'>
                                     <Home />
                                 </Route>

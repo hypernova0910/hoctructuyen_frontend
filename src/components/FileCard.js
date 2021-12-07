@@ -13,8 +13,11 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import word from '../img/word-icon.png'
 import fileDownload from 'js-file-download'
+import useAuth from '../hooks/useAuth';
+import { Roles, FileType } from '../common/constants';
 
 import TeacherFileService from '../services/TeacherFileService';
+import StudentFileService from '../services/StudentFileService';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -32,6 +35,8 @@ export default function FileCard(props) {
   const open = Boolean(anchorEl);
   const [state, dispatch] = props.fileMangager
 
+  const {role} = useAuth()
+
   const handleRightClick = (event) => {
       //console.log('Right click');
       event.preventDefault();
@@ -43,17 +48,17 @@ export default function FileCard(props) {
   };
 
   const handleDownload = () => {
-    console.log(props.file.idfilegv)
+    //console.log(props.file.idfilegv)
     if(props.file.idfilegv){
       const search = {long1: props.file.idfilegv}
       TeacherFileService.downloadFile(search).then((res) => {
         fileDownload(res.data, props.file.tenFile);
-        // console.log(res)
-        // window.location.href = URL.createObjectURL(
-        //   new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
-        // );
-        //window.location.href = URL.createObjectURL(b64toBlob(res.data, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'))
-        //link.click();
+      })
+    }
+    else if(props.file.idfilesv){
+      const search = {long1: props.file.idfilesv}
+      StudentFileService.downloadFile(search).then((res) => {
+        fileDownload(res.data, props.file.tenFile);
       })
     }
     
@@ -66,6 +71,9 @@ export default function FileCard(props) {
     }
     else if(props.file.idfilegv){
       action.fileId = props.file.idfilegv
+    }
+    else if(props.file.idfilesv){
+      action.fileId = props.file.idfilesv
     }
     dispatch(action)
   }
@@ -121,7 +129,9 @@ export default function FileCard(props) {
         }}
       >
         <MenuItem onClick={handleDownload}>Tải xuống</MenuItem>
-        <MenuItem onClick={handleDelete}>Xóa</MenuItem>
+        <MenuItem 
+        sx={((role === Roles.TEACHER && props.type == FileType.TEACHER) || (role === Roles.STUDENT && props.type == FileType.STUDENT)) ? {} : {display: 'none'}} 
+        onClick={handleDelete}>Xóa</MenuItem>
       </Menu>
     </div>
   );
