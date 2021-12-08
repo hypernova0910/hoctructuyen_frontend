@@ -24,6 +24,7 @@ import ReactLoading from 'react-loading';
 import ProcessForm from './ProcessForm';
 import LoginService from '../services/LoginService'
 import useSnackbar from '../hooks/useSnackbar';
+import Intro from './Intro'
 
 function App(){
     const { loadingContext } = useContext(StoreContext);
@@ -92,6 +93,7 @@ function App(){
                     <div className="container" id="main">
                         <ErrorBoundary>
                             <Switch>
+                                <Route path='/gioi-thieu' component={Intro}/>
                                 <Route path='/course/:id' component={CourseDetail}/>
                                     {/* <Switch>
                                         <Route path='/' component={CourseDetail}/>

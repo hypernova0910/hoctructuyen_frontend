@@ -19,7 +19,6 @@ class CourseService{
             return axios.post(CLASS_INFO_REST_API_URL + 'sinhvien/' + year + '/' + semester, search)
         }
         else if(role == Roles.TEACHER){
-            console.log('teacher')
             return axios.post(CLASS_INFO_REST_API_URL + 'giaovien/' + year + '/' + semester, search)
         }
     }

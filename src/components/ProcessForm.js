@@ -19,7 +19,7 @@ import useAuth from '../hooks/useAuth';
 import useSnackbar from '../hooks/useSnackbar';
 import useDialog from '../hooks/useDialog';
 import TeacherFileService from '../services/TeacherFileService';
-import {Roles} from "../common/constants"
+import {Roles, FileType} from "../common/constants"
 import {Link, Redirect} from "react-router-dom"
 
 function reducer(state, action) {
@@ -96,6 +96,8 @@ export default function ProcessForm(props){
     const {toast} = useSnackbar()
     const {showDialog} = useDialog()
 
+    const MB = 1024 * 1024
+
     //const fileCardsRef = useRef([{}, {}])
     //console.log(fileCards)
 
@@ -125,9 +127,11 @@ export default function ProcessForm(props){
 
     const handleClose = () => {
         if(changed){
-            showDialog('Cảnh báo', 'Các thay đổi sẽ không được lưu. Bạn có chắc muốn thoát', () => {
-                setOpen(false);
-            })
+            showDialog(
+                'Cảnh báo', 
+                'Các thay đổi sẽ không được lưu. Bạn có chắc muốn thoát', 
+                [{text: 'Hủy'}, {text: 'Đồng ý', onClick: () => {setOpen(false)}}]
+            )
         }
         else{
             setOpen(false);
@@ -154,6 +158,8 @@ export default function ProcessForm(props){
                 
             }).catch((err) => {
                 success = false
+            }).finally(() => {
+                setReload(true)
             })
             // console.log(state.filesAdd.length)
             // console.log(state.filesDelete.length)
@@ -169,6 +175,8 @@ export default function ProcessForm(props){
                 }).catch((err) => {
                     //alert('error', 'Thêm mới thất bại')
                     success = false
+                }).finally(() => {
+                    setReload(true)
                 })
             }
             if(state.filesDelete.length > 0){
@@ -202,29 +210,51 @@ export default function ProcessForm(props){
                         toast('success', 'Thêm mới thành công')
                     }).catch((err) => {
                         toast('error', 'Thêm mới thất bại')
+                    }).finally(() => {
+                        setReload(true)
                     })
                 }
                 else{
                     toast('success', 'Thêm mới thành công')
                 }
+            }).finally(() => {
+                setReload(true)
             })
         }
         
         setOpen(false);
-        setReload(true)
+        
     }
 
     function handleChooseFile(e){
         if(fileInput.current.files){
-            // for(let i = 0; i < fileInput.current.files.length; i++){
-            //     let fileObj = {
-            //         id: fileCountRef.current++,
-            //         file: fileInput.current.files[i],
-            //         fileName: fileInput.current.files[i].name
-            //     }
-            //     dispatch({file: fileObj})
-            // }
+            let sumSize = 0
+            let invalidFileIndex = []
             for(let i = 0; i < fileInput.current.files.length; i++){
+                if(fileInput.current.files[i].size/MB >= 5){
+                    invalidFileIndex.push(i)
+                    showDialog(
+                        'Cảnh báo', 
+                        'File ' + fileInput.current.files[i].name + ' có kích cỡ vượt quá 5MB nên không được chấp nhận', 
+                        [{text: 'OK'}]
+                    )
+                    continue
+                }
+                sumSize += fileInput.current.files[i].size
+            }
+            if(sumSize/MB >= 20){
+                showDialog(
+                    'Cảnh báo', 
+                    'Tổng kích thước các file đã chọn vượt 20MB nên không được chấp nhận', 
+                    [{text: 'OK'}]
+                )
+                return
+            }
+            for(let i = 0; i < fileInput.current.files.length; i++){
+                //console.log(fileInput.current.files[i])
+                if(invalidFileIndex.includes(i)){
+                    continue
+                }
                 let fileObj = {
                     id: ++fileCountRef.current,
                     file: fileInput.current.files[i],
@@ -357,7 +387,7 @@ export default function ProcessForm(props){
                 <label>Tài liệu</label>
                 <div className="row py-2">
                     <div className="col-lg-12">
-                        <FileList files={state.files} fileMangager={[state, dispatch]}/>
+                        <FileList type={FileType.TEACHER} files={state.files} fileMangager={[state, dispatch]}/>
                     </div>
                 </div>
                 <DialogContentText>

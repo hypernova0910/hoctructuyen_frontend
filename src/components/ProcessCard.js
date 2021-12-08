@@ -45,15 +45,21 @@ export default function ProcessCard(props) {
     }
 
     function onClickDelete(){
-        showDialog('Cảnh báo', 'Bạn có chắc muốn xóa quá trình này', () => {
-            //console.log(props.process.maquatrinh)
-            ProcessService.deleteObj(props.process.maquatrinh).then((res) => {
-                toast('success', 'Xóa thành công')
-                setReload(true)
-            }).catch((err) => {
-                toast('error', 'Xóa thất bại')
-            })
-        })
+        let buttons = [
+            {text: 'Hủy'},
+            {text: 'Đồng ý',
+            onClick: () => {
+                //console.log(props.process.maquatrinh)
+                ProcessService.deleteObj(props.process.maquatrinh).then((res) => {
+                    toast('success', 'Xóa thành công')
+                }).catch((err) => {
+                    toast('error', 'Xóa thất bại')
+                }).finally(() => {
+                    setReload(true)
+                })
+            }}
+        ]
+        showDialog('Cảnh báo', 'Bạn có chắc muốn xóa quá trình này', buttons)
     }
 
     useEffect(() => {

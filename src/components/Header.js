@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useState} from 'react';
 import { StoreContext } from "../utils/store";
 import useAuth from '../hooks/useAuth';
 import logo from '../img/school.png'
@@ -6,12 +6,8 @@ import { Link, useHistory } from 'react-router-dom';
 import {browserHistory} from 'react-router'
 
 function Header(props) {
-    // const { idContext } = useContext(StoreContext);
-    // const [id, setId] = idContext
-    // const { roleContext } = useContext(StoreContext);
-    // const [role, setRole] = roleContext
-    // const { usernameContext } = useContext(StoreContext);
-    // const [username, setUsername] = usernameContext
+    const [page, setPage] = useState('Học phần')
+
     const {logout, user, role} = useAuth()
     let username = ''
     if(role == 'student'){
@@ -39,9 +35,23 @@ function Header(props) {
         
                 <ul className="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 {/* <!-- <li><a href="#" className="nav-link px-2 text-secondary">Logo</a></li> --> */}
-                <li><a href="#" className="nav-link px-2"><img src={logo}/></a></li>
-                <li><a href="#" className="nav-link px-2 text-secondary">Học phần</a></li>
-                <li><a href="#" className="nav-link px-2 text-white">Giới thiệu</a></li>
+                {/* <li><Link className="nav-link px-2" to="/"><img src={logo}/></Link></li> */}
+                <li>
+                    <Link 
+                    to="/" 
+                    className={"nav-link px-2 " + (page == 'Học phần' ? "text-secondary" : "text-white")}
+                    onClick={() => {setPage('Học phần')}}
+                    >Học phần
+                    </Link>
+                </li>
+                <li>
+                    <Link 
+                    to="/gioi-thieu" 
+                    className={"nav-link px-2 " + (page == 'Giới thiệu' ? "text-secondary" : "text-white")}
+                    onClick={() => {setPage('Giới thiệu')}}
+                    >Giới thiệu
+                    </Link>
+                    </li>
                 </ul>
         
                 <div className="dropdown text-end">

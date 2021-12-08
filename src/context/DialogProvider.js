@@ -12,6 +12,7 @@ export default ({ children}) => {
     const [title, setTitle] = useState('')
     const [message, setMessage] = useState('');
     const [open, setOpen] = useState(false);
+    const [buttons, setButtons] = useState([])
     //const [confirmHandler, setConfirmHandler] = useState(() => {})
     const [confirmHandler, setConfirmHandler] = useReducer((state, action) =>{
         return () => {
@@ -24,7 +25,8 @@ export default ({ children}) => {
         openContext: [open, setOpen],
         confirmHandlerContext: [confirmHandler, setConfirmHandler],
         messageContext: [message, setMessage],
-        titleContext: [title, setTitle]
+        titleContext: [title, setTitle],
+        buttonsContext: [buttons, setButtons]
     };
 
     // const handleConfirm = () => {
@@ -54,8 +56,20 @@ export default ({ children}) => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>Hủy</Button>
-                <Button onClick={confirmHandler}>Đồng ý</Button>
+                {
+                    buttons.map((button) => 
+                    <Button 
+                    onClick={() => {
+                        if(typeof button.onClick == 'function'){
+                            button.onClick()
+                        }
+                        setOpen(false);
+                    }}>{button.text}
+                    </Button>
+                    )
+                }
+                {/* <Button onClick={handleClose}>Hủy</Button>
+                <Button onClick={confirmHandler}>Đồng ý</Button> */}
             </DialogActions>
             </Dialog>
         </DialogContext.Provider>

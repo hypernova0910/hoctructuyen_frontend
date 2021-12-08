@@ -11,6 +11,7 @@ import useSnackbar from '../hooks/useSnackbar';
 import {FileType} from '../common/constants'
 import FileList from './FileList'
 import NotFound404 from './NotFound404';
+import useDialog from '../hooks/useDialog';
 
 function reducer(state, action) {
     if(action.type == 'clear'){
@@ -75,6 +76,8 @@ export default function SubmitExercise(props) {
     const { loadingContext } = useContext(StoreContext);
     const [ loading, setLoading ] = loadingContext
     const [empty, setEmpty] = useState(false)
+    const {showDialog} = useDialog()
+    const MB = 1024 * 1024
     let id = 0
     
     useEffect(() => {
@@ -124,15 +127,33 @@ export default function SubmitExercise(props) {
 
     function handleChooseFile(e){
         if(fileInput.current.files){
-            // for(let i = 0; i < fileInput.current.files.length; i++){
-            //     let fileObj = {
-            //         id: fileCountRef.current++,
-            //         file: fileInput.current.files[i],
-            //         fileName: fileInput.current.files[i].name
-            //     }
-            //     dispatch({file: fileObj})
-            // }
+            let sumSize = 0
+            let invalidFileIndex = []
             for(let i = 0; i < fileInput.current.files.length; i++){
+                if(fileInput.current.files[i].size/MB >= 5){
+                    invalidFileIndex.push(i)
+                    showDialog(
+                        'Cảnh báo', 
+                        'File ' + fileInput.current.files[i].name + ' có kích cỡ vượt quá 5MB nên không được chấp nhận', 
+                        [{text: 'OK'}]
+                    )
+                    continue
+                }
+                sumSize += fileInput.current.files[i].size
+            }
+            if(sumSize/MB >= 20){
+                showDialog(
+                    'Cảnh báo', 
+                    'Tổng kích thước các file đã chọn vượt 20MB nên không được chấp nhận', 
+                    [{text: 'OK'}]
+                )
+                return
+            }
+            for(let i = 0; i < fileInput.current.files.length; i++){
+                //console.log(fileInput.current.files[i])
+                if(invalidFileIndex.includes(i)){
+                    continue
+                }
                 let fileObj = {
                     id: ++fileCountRef.current,
                     file: fileInput.current.files[i],
@@ -143,7 +164,6 @@ export default function SubmitExercise(props) {
             }
             fileInput.current.files = undefined
         }
-        
     }
 
     function handleClickCancel(){
