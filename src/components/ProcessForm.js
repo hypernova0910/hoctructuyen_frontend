@@ -19,6 +19,7 @@ import useAuth from '../hooks/useAuth';
 import useSnackbar from '../hooks/useSnackbar';
 import useDialog from '../hooks/useDialog';
 import TeacherFileService from '../services/TeacherFileService';
+import TextToSpeechService from '../services/TextToSpeechService'
 import {Roles, FileType} from "../common/constants"
 import {Link, Redirect} from "react-router-dom"
 
@@ -91,6 +92,7 @@ export default function ProcessForm(props){
     const [moTa, setMoTa] = useState('')
 
     const [changed, setChanged] = useState(false)
+    const [audioContent, setAudioContent] = useState('')
 
     const {user, role} = useAuth()
     const {toast} = useSnackbar()
@@ -111,6 +113,15 @@ export default function ProcessForm(props){
             setYeuCauNopBai(process.thoiGianNop ? true : false)
             setThoiGianNop(process.thoiGianNop ? process.thoiGianNop : new Date())
             setMoTa(process.moTa)
+            //console.log(moTa)
+            if(moTa.trim() != ''){
+                TextToSpeechService.postText(process.moTa, 'vi-VN').then((res) => {
+                    setAudioContent(res.data.audioContent)
+                    var audio = new Audio("data:audio/wav;base64," + res.data.audioContent);
+                    audio.play();
+                })
+            }
+            
             fileCountRef.current = 0
             const search = {
                 //long1: user.magiaovien,
@@ -124,6 +135,14 @@ export default function ProcessForm(props){
             })
         }
     }, [process])
+
+    const hanldeClickConvert = function(){
+        TextToSpeechService.postText(moTa, 'vi-VN').then((res) => {
+            setAudioContent(res.data.audioContent)
+            var audio = new Audio("data:audio/wav;base64," + res.data.audioContent);
+            audio.play();
+        })
+    }
 
     const handleClose = () => {
         if(changed){
@@ -346,6 +365,26 @@ export default function ProcessForm(props){
                         }}
                         inputProps={role === Roles.TEACHER ? {} : {readOnly: true}}
                         />
+                    </div>
+                </div>
+                <div className="row py-2">
+                    <div className="col-lg-3">
+                        {/* <button type="button" className="btn btn-primary" onClick={hanldeClickConvert}>Nghe mô tả</button> */}
+                        <Button
+                        variant="contained"
+                        component="label"
+                        sx={{margin: "8px 8px 8px 0"}}
+                        onClick={hanldeClickConvert}
+                        >
+                        Nghe mô tả
+                        
+                        </Button>
+                    </div>
+                    <div className="col-lg-1"></div>
+                    <div className="col-lg-8">
+                        <audio autoPlay controls src={'data:audio/mpeg;base64,' + audioContent}>
+                            The “audio” tag is not supported by your browser.
+                        </audio>
                     </div>
                 </div>
                 <div className="d-flex">

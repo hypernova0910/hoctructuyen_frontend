@@ -171,15 +171,15 @@ export default function SubmitExercise(props) {
     }
 
     function handleClickSave(){
+        if(state.files.length == 0){
+            setEmpty(true)
+            return
+        }
         if(nhomFileSinhVien){
             console.log(nhomFileSinhVien)
             // obj.maquatrinh = process.maquatrinh
             let success = true
             // ProcessService.updateObj(obj).then((res) => {
-            if(state.files.length == 0){
-                setEmpty(true)
-                return
-            }
             
             // }).catch((err) => {
             //     success = false

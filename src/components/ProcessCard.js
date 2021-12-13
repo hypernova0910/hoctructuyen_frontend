@@ -100,7 +100,7 @@ export default function ProcessCard(props) {
             </TableCell>
             <TableCell sx={role == Roles.TEACHER ? {display: 'none'} : {}}>
             {
-                (role == Roles.STUDENT && props.process.thoiGianNop != null) ? <Checkbox checked={nhomFileSV}/> : <></>
+                (role == Roles.STUDENT && props.process.thoiGianNop != null) ? <Checkbox checked={nhomFileSV ? true : false}/> : <></>
             } 
             </TableCell>
             <TableCell sx={role == Roles.TEACHER ? {display: 'none'} : {}}>
